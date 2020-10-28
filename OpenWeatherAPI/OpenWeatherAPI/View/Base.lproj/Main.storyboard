@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="yls-TX-x4R">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--城市-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="OpenWeatherAPI" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hQb-kZ-uDI">
+                                <rect key="frame" x="0.0" y="618" width="375" height="200"/>
+                                <color key="backgroundColor" systemColor="systemGray6Color" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="200" id="Xzh-dO-2eb"/>
+                                </constraints>
+                            </pickerView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="被選取到的城市" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HUd-of-poe">
+                                <rect key="frame" x="97.5" y="94" width="180" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="180" id="Dff-ur-wIP"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="25"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="m4U-2Y-IIT">
+                                <rect key="frame" x="75" y="312.5" width="102" height="42"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="25"/>
+                                <state key="normal" title="選取城市"/>
+                                <connections>
+                                    <action selector="selectCity:" destination="BYZ-38-t0r" eventType="touchUpInside" id="J6N-HX-UFD"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xg1-nP-E5w">
+                                <rect key="frame" x="198" y="312.5" width="102" height="42"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="25"/>
+                                <state key="normal" title="開始查詢"/>
+                                <connections>
+                                    <action selector="beginSearch:" destination="BYZ-38-t0r" eventType="touchUpInside" id="P7h-Ab-Znk"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="HUd-of-poe" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="50" id="IAl-wp-gEM"/>
+                            <constraint firstItem="Xg1-nP-E5w" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="Jbi-Od-qZy"/>
+                            <constraint firstItem="hQb-kZ-uDI" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="Jo4-sI-Ube"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Xg1-nP-E5w" secondAttribute="trailing" constant="75" id="L8h-hl-OKJ"/>
+                            <constraint firstItem="m4U-2Y-IIT" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="M0k-Sn-aGu"/>
+                            <constraint firstItem="hQb-kZ-uDI" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" constant="200" id="ZCN-Wt-YIU"/>
+                            <constraint firstItem="m4U-2Y-IIT" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="75" id="Zdg-wX-ivf"/>
+                            <constraint firstItem="HUd-of-poe" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="dBo-Ib-ei0"/>
+                            <constraint firstItem="Xg1-nP-E5w" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="m4U-2Y-IIT" secondAttribute="trailing" constant="8" symbolic="YES" id="eFU-xJ-zPW"/>
+                            <constraint firstItem="hQb-kZ-uDI" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="s4y-of-7JV"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="城市" image="UITabBarMoreTemplate" id="7cx-rE-g7y"/>
+                    <navigationItem key="navigationItem" id="gL5-aN-XzB"/>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" prompted="NO"/>
+                    <connections>
+                        <outlet property="beginSearchBtn" destination="Xg1-nP-E5w" id="h6W-SS-pN6"/>
+                        <outlet property="cityBarItem" destination="7cx-rE-g7y" id="4SC-w6-CDr"/>
+                        <outlet property="cityPicker" destination="hQb-kZ-uDI" id="DtX-w7-vAH"/>
+                        <outlet property="pickerViewShow" destination="ZCN-Wt-YIU" id="Cu4-WZ-6Ds"/>
+                        <outlet property="selectBtn" destination="m4U-2Y-IIT" id="7Co-Dw-g7F"/>
+                        <outlet property="selectedCityLabel" destination="HUd-of-poe" id="ino-RE-Rbd"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1009" y="-314"/>
+        </scene>
+        <!--經緯度-->
+        <scene sceneID="LkZ-sH-s9z">
+            <objects>
+                <viewController storyboardIdentifier="lonlatVC" id="eqE-3v-eaY" customClass="LonLatViewController" customModule="OpenWeatherAPI" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="XQd-6f-0CF">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="所查詢的城市名稱" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AtH-0j-wCo">
+                                <rect key="frame" x="85" y="94" width="205" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="205" id="rqw-hq-1c3"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="25"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="請輸入要查詢城市的經度" textAlignment="natural" clearsOnBeginEditing="YES" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="W5Z-pT-VMn">
+                                <rect key="frame" x="85" y="150" width="205" height="36"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="請輸入要查詢城市的緯度" textAlignment="natural" clearsOnBeginEditing="YES" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="cR8-BA-n6A">
+                                <rect key="frame" x="85" y="192" width="205" height="36"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lnR-56-Tnd">
+                                <rect key="frame" x="136.5" y="248" width="102" height="42"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="25"/>
+                                <state key="normal" title="開始查詢"/>
+                                <connections>
+                                    <action selector="beginSearch:" destination="eqE-3v-eaY" eventType="touchUpInside" id="I0g-Gy-f6R"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="W5Z-pT-VMn" firstAttribute="leading" secondItem="AtH-0j-wCo" secondAttribute="leading" id="0sT-DE-XBe"/>
+                            <constraint firstItem="W5Z-pT-VMn" firstAttribute="centerX" secondItem="KgU-do-pyB" secondAttribute="centerX" id="31O-t6-vF4"/>
+                            <constraint firstItem="AtH-0j-wCo" firstAttribute="top" secondItem="KgU-do-pyB" secondAttribute="top" constant="50" id="LHJ-3t-TZ5"/>
+                            <constraint firstItem="cR8-BA-n6A" firstAttribute="centerX" secondItem="KgU-do-pyB" secondAttribute="centerX" id="Lzr-1F-28z"/>
+                            <constraint firstItem="lnR-56-Tnd" firstAttribute="top" secondItem="cR8-BA-n6A" secondAttribute="bottom" constant="20" id="QOK-g9-x8J"/>
+                            <constraint firstItem="cR8-BA-n6A" firstAttribute="top" secondItem="W5Z-pT-VMn" secondAttribute="bottom" constant="6" id="SiH-OJ-yX1"/>
+                            <constraint firstItem="W5Z-pT-VMn" firstAttribute="top" secondItem="AtH-0j-wCo" secondAttribute="bottom" constant="26" id="bkn-vq-l9M"/>
+                            <constraint firstItem="lnR-56-Tnd" firstAttribute="centerX" secondItem="KgU-do-pyB" secondAttribute="centerX" id="dAs-er-FRC"/>
+                            <constraint firstItem="AtH-0j-wCo" firstAttribute="centerX" secondItem="KgU-do-pyB" secondAttribute="centerX" id="eMS-Zx-TAQ"/>
+                            <constraint firstItem="W5Z-pT-VMn" firstAttribute="leading" secondItem="cR8-BA-n6A" secondAttribute="leading" id="jBc-Wy-qB4"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="KgU-do-pyB"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="經緯度" image="UITabBarMoreTemplate" id="40H-85-gRQ"/>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" prompted="NO"/>
+                    <connections>
+                        <outlet property="cityLatTextField" destination="cR8-BA-n6A" id="zsk-D6-Byd"/>
+                        <outlet property="cityLonTextField" destination="W5Z-pT-VMn" id="ptX-Uu-QtC"/>
+                        <outlet property="lonlatTabBarItem" destination="40H-85-gRQ" id="8UH-vf-HCW"/>
+                        <outlet property="searchCityLabel" destination="AtH-0j-wCo" id="1TE-EN-L7t"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="jge-ti-FcW" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1008.8" y="369.26536731634184"/>
+        </scene>
+        <!--Tab Bar Controller-->
+        <scene sceneID="d4K-Xe-TcR">
+            <objects>
+                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="yls-TX-x4R" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" barStyle="black" id="PTb-yd-cI9">
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="viewControllers" id="d02-un-e5U"/>
+                        <segue destination="eqE-3v-eaY" kind="relationship" relationship="viewControllers" id="6OS-za-Djf"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iIa-er-ipj" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="216.80000000000001" y="69.715142428785612"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="UITabBarMoreTemplate" width="24" height="5"/>
+    </resources>
+</document>
