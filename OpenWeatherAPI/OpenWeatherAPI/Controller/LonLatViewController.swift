@@ -4,18 +4,18 @@ class LonLatViewController: UIViewController {
 
     @IBOutlet weak var lonlatTabBarItem: UITabBarItem!
     @IBOutlet weak var searchCityLabel: UILabel!
-    @IBOutlet weak var cityLonTextField: UITextField! //經度
-    @IBOutlet weak var cityLatTextField: UITextField! //緯度
+    @IBOutlet weak var cityLonTextField: UITextField! // 經度
+    @IBOutlet weak var cityLatTextField: UITextField! // 緯度
     
-    var weatherTemp = [String]()
-    var weatherResult:String? = nil
+    var weatherTemp: [String] = []
+    var weatherResult: String? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.addCloseBtnOnKeyBoard()
     }
     
-    //MARK: - 在鍵盤上新增 Button
+    // MARK: - 在鍵盤上新增 Button
     
     func addCloseBtnOnKeyBoard() {
         let doneBtn = UIBarButtonItem(title: "關閉", style: .done, target: self, action: #selector(closeBtnAction))
@@ -35,63 +35,112 @@ class LonLatViewController: UIViewController {
         self.cityLatTextField.resignFirstResponder()
     }
 
-    //MARK: - 取得天氣資料
+    // MARK: - 取得天氣資料
     
-    func getWeatherDataWithLonLat(lon:Double, lat:Double) {
+    func getWeatherDataWithLonLat(lon: Double, lat: Double) {
         weatherTemp = []
-        let address = "http://api.openweathermap.org/data/2.5/weather?"
-        let apikey = "62ef5eba4eeb4662491645f8f68cc219"
-        if let url = URL(string: address + "lat=\(lat)" + "&lon=\(lon)" + "&appid=" + apikey) {
-            URLSession.shared.dataTask(with: url) { (data, response, error) in
-                if let error = error {
-                    print("Error:\(error.localizedDescription)")
-                }else if let response = response as? HTTPURLResponse, let data = data {
-                    print("Status Code:\(response.statusCode)")
-                    let decoder = JSONDecoder()
-                    if let weatherData = try? decoder.decode(CurrectWeatherData.self, from: data) {
-                        print("============== Weather Data ==============")
-                        print(weatherData)
-                        print("============== Weather Data ==============")
-                        DispatchQueue.main.async {
-                            self.weatherTemp.append(weatherData.name)
-                            self.weatherTemp.append(String(weatherData.coord.lon))
-                            self.weatherTemp.append(String(weatherData.coord.lat))
-                            self.weatherTemp.append(String(Int(weatherData.main.temp)/10)+"°C")
-                            self.weatherTemp.append(String(weatherData.main.humidity)+"%")
-                            self.weatherResult = "城市名稱：\(self.weatherTemp[0])\n經度：\(self.weatherTemp[1])\n緯度：\(self.weatherTemp[2])\n目前溫度：\(self.weatherTemp[3])\n目前濕度：\(self.weatherTemp[4])"
-                            self.searchCityLabel.text = self.weatherTemp[0]
-                            print(self.weatherResult ?? "查無資料")
-                            self.alert(title:"天氣查詢結果", message: self.weatherResult ?? "查無資料")
-                        }
+        if #available(iOS 15.0, *) {
+            Task {
+                do {
+                    let weatherData = try await WeatherAPIService.shared.getWeatherData(lon: lon, lat: lat)
+                    DispatchQueue.main.async {
+                        self.weatherTemp.append(weatherData.name)
+                        self.weatherTemp.append(String(weatherData.coord.lon))
+                        self.weatherTemp.append(String(weatherData.coord.lat))
+                        self.weatherTemp.append(String(Int(weatherData.main.temp)/10)+"°C")
+                        self.weatherTemp.append(String(weatherData.main.humidity)+"%")
+                        self.weatherResult = "城市名稱：\(self.weatherTemp[0])\n經度：\(self.weatherTemp[1])\n緯度：\(self.weatherTemp[2])\n目前溫度：\(self.weatherTemp[3])\n目前濕度：\(self.weatherTemp[4])"
+                        print(self.weatherResult ?? "查無資料")
+                        self.alert(title:"天氣查詢結果", message: self.weatherResult ?? "查無資料")
+                    }
+                } catch WeatherAPIService.WeatherDataFetchError.invalidURL {
+                    print("無效的 URL")
+                } catch WeatherAPIService.WeatherDataFetchError.requestFailed {
+                    print("Request Error")
+                } catch WeatherAPIService.WeatherDataFetchError.responseFailed {
+                    print("Response Error")
+                } catch WeatherAPIService.WeatherDataFetchError.jsonDecodeFailed {
+                    print("JSON Decode 失敗")
+                }
+            }
+        } else if #available(iOS 14.0, *) {
+            WeatherAPIService.shared.getWeatherData(lon: lon, lat: lat) { result in
+                switch result {
+                case .success(let weatherData):
+                    DispatchQueue.main.async {
+                        self.weatherTemp.append(weatherData.name)
+                        self.weatherTemp.append(String(weatherData.coord.lon))
+                        self.weatherTemp.append(String(weatherData.coord.lat))
+                        self.weatherTemp.append(String(Int(weatherData.main.temp)/10)+"°C")
+                        self.weatherTemp.append(String(weatherData.main.humidity)+"%")
+                        self.weatherResult = "城市名稱：\(self.weatherTemp[0])\n經度：\(self.weatherTemp[1])\n緯度：\(self.weatherTemp[2])\n目前溫度：\(self.weatherTemp[3])\n目前濕度：\(self.weatherTemp[4])"
+                        print(self.weatherResult ?? "查無資料")
+                        self.alert(title:"天氣查詢結果", message: self.weatherResult ?? "查無資料")
+                    }
+                case.failure(let fetchError):
+                    switch fetchError {
+                    case .invalidURL:
+                        print("無效的 URL")
+                    case .requestFailed:
+                        print("Request Error")
+                    case .responseFailed:
+                        print("Response Error")
+                    case .jsonDecodeFailed:
+                        print("JSON Decode 失敗")
                     }
                 }
-            }.resume()
-        }else{
-            print("無效的 URL")
+            }
+        } else {
+            WeatherAPIService.shared.getWeatherData(lon: lon, lat: lat) { weatherData in
+                DispatchQueue.main.async {
+                    self.weatherTemp.append(weatherData.name)
+                    self.weatherTemp.append(String(weatherData.coord.lon))
+                    self.weatherTemp.append(String(weatherData.coord.lat))
+                    self.weatherTemp.append(String(Int(weatherData.main.temp)/10)+"°C")
+                    self.weatherTemp.append(String(weatherData.main.humidity)+"%")
+                    self.weatherResult = "城市名稱：\(self.weatherTemp[0])\n經度：\(self.weatherTemp[1])\n緯度：\(self.weatherTemp[2])\n目前溫度：\(self.weatherTemp[3])\n目前濕度：\(self.weatherTemp[4])"
+                    print(self.weatherResult ?? "查無資料")
+                    self.alert(title:"天氣查詢結果", message: self.weatherResult ?? "查無資料")
+                }
+            } failure: { weatherFetchError in
+                switch weatherFetchError {
+                case .invalidURL:
+                    print("無效的 URL")
+                case .requestFailed:
+                    print("Request Error")
+                case .responseFailed:
+                    print("Response Error")
+                case .jsonDecodeFailed:
+                    print("JSON Decode 失敗")
+                }
+            }
         }
     }
     
-    //MARK: - 天氣查詢結果以訊息框方式跳出
+    // MARK: - 天氣查詢結果以訊息框方式跳出
     
-    func alert(title:String, message:String) {
+    func alert(title: String, message: String) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let closeAction = UIAlertAction(title: "關閉", style: .default, handler: nil)
         alertController.addAction(closeAction)
         present(alertController,animated: true)
     }
     
-    //MARK: - @IBAction 元件
+    // MARK: - @IBAction 元件
     
     @IBAction func beginSearch(_ sender: Any) {
         if (cityLonTextField.text == "" || cityLatTextField.text == "") {
             self.alert(title: "", message: "請輸入經緯度")
-        }else{
+        } else {
             self.getWeatherDataWithLonLat(lon: Double(cityLonTextField.text!)!, lat: Double(cityLatTextField.text!)!)
         }
     }
 }
 
-//MARK: - 參考來源
+// MARK: - 參考來源
 
-//在鍵盤上加入按鈕
-//https://mini.nidbox.com/diary/read/9586569
+/**
+1. 在鍵盤上加入按鈕
+https://mini.nidbox.com/diary/read/9586569
+ 
+ */

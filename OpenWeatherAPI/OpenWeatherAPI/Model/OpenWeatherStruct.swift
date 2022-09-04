@@ -11,8 +11,8 @@ struct CurrectWeatherData: Decodable {
 }
 
 struct Coord: Decodable {
-    var lon: Double //經度
-    var lat: Double //緯度
+    var lon: Double // 經度
+    var lat: Double // 緯度
 }
 
 struct Main: Decodable {
