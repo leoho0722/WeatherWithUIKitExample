@@ -10,6 +10,16 @@ App 最低安裝限制：iOS 13.0
 
 API 來源：OpenWeather 
 
+### WeatherDataFetchError
+```swift
+enum WeatherDataFetchError: Error {
+    case invalidURL
+    case requestFailed
+    case responseFailed
+    case jsonDecodeFailed
+}
+```
+
 ## Input City Name
 
 ### Result type Support！
@@ -98,7 +108,7 @@ func getWeatherData(city: String) async throws -> WeatherData {
 @available(swift 5.0)
 func getWeatherData(lon: Double, lat: Double, completion: @escaping (Result<CurrectWeatherData, WeatherDataFetchError>) -> Void) {
     let address = "https://api.openweathermap.org/data/2.5/weather?"
-    let apikey = "YOUR_API_KEY"
+    let apikey = "62ef5eba4eeb4662491645f8f68cc219"
     
     guard let url = URL(string: address + "lat=\(lat)" + "&lon=\(lon)" + "&appid=" + apikey) else {
         completion(.failure(.invalidURL))
@@ -142,7 +152,7 @@ func getWeatherData(lon: Double, lat: Double, completion: @escaping (Result<Curr
 @available(swift 5.5)
 func getWeatherData(lon: Double, lat: Double) async throws -> CurrectWeatherData {
     let address = "https://api.openweathermap.org/data/2.5/weather?"
-    let apikey = "YOUR_API_KEY"
+    let apikey = "62ef5eba4eeb4662491645f8f68cc219"
     
     guard let url = URL(string: address + "lat=\(lat)" + "&lon=\(lon)" + "&appid=" + apikey) else {
         throw WeatherDataFetchError.invalidURL
