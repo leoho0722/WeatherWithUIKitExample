@@ -15,6 +15,7 @@
 		886DCF2F24B329FD00A266C2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 886DCF2D24B329FD00A266C2 /* LaunchScreen.storyboard */; };
 		8878B6BB24B56E3D009DA0A1 /* LonLatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8878B6BA24B56E3D009DA0A1 /* LonLatViewController.swift */; };
 		88F05EFB24B4178900719C3B /* OpenWeatherStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F05EFA24B4178900719C3B /* OpenWeatherStruct.swift */; };
+		D08EDD9528C4515C00F7E60D /* WeatherAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D08EDD9428C4515C00F7E60D /* WeatherAPIService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		886DCF3024B329FD00A266C2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8878B6BA24B56E3D009DA0A1 /* LonLatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LonLatViewController.swift; sourceTree = "<group>"; };
 		88F05EFA24B4178900719C3B /* OpenWeatherStruct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenWeatherStruct.swift; sourceTree = "<group>"; };
+		D08EDD9428C4515C00F7E60D /* WeatherAPIService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherAPIService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +76,7 @@
 		886DCF3624B32A0700A266C2 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				D08EDD9428C4515C00F7E60D /* WeatherAPIService.swift */,
 				88F05EFA24B4178900719C3B /* OpenWeatherStruct.swift */,
 			);
 			path = Model;
@@ -124,7 +127,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1150;
-				LastUpgradeCheck = 1150;
+				LastUpgradeCheck = 1340;
 				ORGANIZATIONNAME = imac;
 				TargetAttributes = {
 					886DCF1E24B329FA00A266C2 = {
@@ -171,6 +174,7 @@
 				886DCF2724B329FA00A266C2 /* ViewController.swift in Sources */,
 				8878B6BB24B56E3D009DA0A1 /* LonLatViewController.swift in Sources */,
 				88F05EFB24B4178900719C3B /* OpenWeatherStruct.swift in Sources */,
+				D08EDD9528C4515C00F7E60D /* WeatherAPIService.swift in Sources */,
 				886DCF2324B329FA00A266C2 /* AppDelegate.swift in Sources */,
 				886DCF2524B329FA00A266C2 /* SceneDelegate.swift in Sources */,
 			);
@@ -224,6 +228,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -248,7 +253,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -284,6 +289,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -302,7 +308,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -319,6 +325,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = S8FBP4YLUA;
 				INFOPLIST_FILE = OpenWeatherAPI/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -337,6 +344,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = S8FBP4YLUA;
 				INFOPLIST_FILE = OpenWeatherAPI/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
