@@ -98,7 +98,7 @@ func getWeatherData(city: String) async throws -> WeatherData {
 @available(swift 5.0)
 func getWeatherData(lon: Double, lat: Double, completion: @escaping (Result<CurrectWeatherData, WeatherDataFetchError>) -> Void) {
     let address = "https://api.openweathermap.org/data/2.5/weather?"
-    let apikey = "62ef5eba4eeb4662491645f8f68cc219"
+    let apikey = "YOUR_API_KEY"
     
     guard let url = URL(string: address + "lat=\(lat)" + "&lon=\(lon)" + "&appid=" + apikey) else {
         completion(.failure(.invalidURL))
@@ -142,7 +142,7 @@ func getWeatherData(lon: Double, lat: Double, completion: @escaping (Result<Curr
 @available(swift 5.5)
 func getWeatherData(lon: Double, lat: Double) async throws -> CurrectWeatherData {
     let address = "https://api.openweathermap.org/data/2.5/weather?"
-    let apikey = "62ef5eba4eeb4662491645f8f68cc219"
+    let apikey = "YOUR_API_KEY"
     
     guard let url = URL(string: address + "lat=\(lat)" + "&lon=\(lon)" + "&appid=" + apikey) else {
         throw WeatherDataFetchError.invalidURL
