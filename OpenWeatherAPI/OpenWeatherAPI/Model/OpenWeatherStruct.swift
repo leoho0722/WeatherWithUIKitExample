@@ -1,6 +1,6 @@
 import Foundation
 
-struct CurrectWeatherData: Decodable {
+struct CurrentWeatherData: Decodable {
     var name: String
     var id: Int
     var dt: TimeInterval
