@@ -171,7 +171,7 @@ class NetworkManager: NSObject {
             print("============== Weather Data ==============")
             #endif
             
-            success(weatherData) // 將 API Response 的資料結構 (Model) 也就是 WeatherData，透過 Closure 回傳給 ViewModel
+            success(weatherData)
         }.resume()
     }
     
@@ -212,7 +212,7 @@ class NetworkManager: NSObject {
             print("============== Weather Data ==============")
             #endif
             
-            completion(.success(weatherData)) // 將 API Response 的資料結構 (Model) 也就是 WeatherData，透過 Closure 回傳給 ViewModel
+            completion(.success(weatherData))
         }.resume()
     }
     
