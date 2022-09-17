@@ -8,9 +8,9 @@
 
 import Foundation
 
-class WeatherAPIService: NSObject {
+class NetworkManager: NSObject {
     
-    static let shared = WeatherAPIService()
+    static let shared = NetworkManager()
     
     enum WeatherDataFetchError: Error {
         case invalidURL
@@ -22,7 +22,7 @@ class WeatherAPIService: NSObject {
     // MARK: - 取得天氣資料 (城市名稱)
     
     /// 取得天氣資料 (城市名稱)
-    func getWeatherData(city: String, success: @escaping (CurrentWeatherData) -> Void, failure: @escaping (WeatherDataFetchError) -> Void) {
+    func requestData<D: Decodable>(city: String, success: @escaping (D?) -> Void, failure: @escaping (WeatherDataFetchError) -> Void) {
         let address = "https://api.openweathermap.org/data/2.5/weather?"
         let apikey = "62ef5eba4eeb4662491645f8f68cc219"
         
@@ -47,7 +47,7 @@ class WeatherAPIService: NSObject {
             print("Status Code: \(response.statusCode)")
             
             let decoder = JSONDecoder()
-            guard let weatherData = try? decoder.decode(CurrentWeatherData.self, from: data) else {
+            guard let weatherData = try? decoder.decode(D.self, from: data) else {
                 failure(.jsonDecodeFailed)
                 return
             }
@@ -65,7 +65,7 @@ class WeatherAPIService: NSObject {
     /// 取得天氣資料 (城市名稱) with Result type
     @available(iOS 14.0, *)
     @available(swift 5.0)
-    func getWeatherData(city: String, completion: @escaping (Result<CurrentWeatherData, WeatherDataFetchError>) -> Void) {
+    func requestData<D: Decodable>(city: String, completion: @escaping (Result<D, WeatherDataFetchError>) -> Void) {
         let address = "https://api.openweathermap.org/data/2.5/weather?"
         let apikey = "62ef5eba4eeb4662491645f8f68cc219"
         
@@ -89,7 +89,7 @@ class WeatherAPIService: NSObject {
             print("Status Code: \(response.statusCode)")
             
             let decoder = JSONDecoder()
-            guard let weatherData = try? decoder.decode(CurrentWeatherData.self, from: data) else {
+            guard let weatherData = try? decoder.decode(D.self, from: data) else {
                 completion(.failure(.jsonDecodeFailed))
                 return
             }
@@ -107,7 +107,7 @@ class WeatherAPIService: NSObject {
     /// 取得天氣資料 (城市名稱) async
     @available(iOS 15.0, *)
     @available(swift 5.5)
-    func getWeatherData(city: String) async throws -> CurrentWeatherData {
+    func requestData<D: Decodable>(city: String) async throws -> D {
         let address = "https://api.openweathermap.org/data/2.5/weather?"
         let apikey = "62ef5eba4eeb4662491645f8f68cc219"
         
@@ -123,7 +123,7 @@ class WeatherAPIService: NSObject {
         print("Status Code: \(response.statusCode)")
         
         let decoder = JSONDecoder()
-        guard let weatherData = try? decoder.decode(CurrentWeatherData.self, from: data) else {
+        guard let weatherData = try? decoder.decode(D.self, from: data) else {
             throw WeatherDataFetchError.jsonDecodeFailed
         }
         
@@ -139,7 +139,7 @@ class WeatherAPIService: NSObject {
     // MARK: - 取得天氣資料 (經緯度)
     
     /// 取得天氣資料 (經緯度)
-    func getWeatherData(lon: Double, lat: Double, success: @escaping (CurrentWeatherData) -> Void, failure: @escaping (WeatherDataFetchError) -> Void) {
+    func requestData<D: Decodable>(lon: Double, lat: Double, success: @escaping (D?) -> Void, failure: @escaping (WeatherDataFetchError) -> Void) {
         let address = "https://api.openweathermap.org/data/2.5/weather?"
         let apikey = "62ef5eba4eeb4662491645f8f68cc219"
         
@@ -163,7 +163,7 @@ class WeatherAPIService: NSObject {
             }
             
             let decoder = JSONDecoder()
-            guard let weatherData = try? decoder.decode(CurrentWeatherData.self, from: data) else { return }
+            guard let weatherData = try? decoder.decode(D.self, from: data) else { return }
             
             #if DEBUG
             print("============== Weather Data ==============")
@@ -178,7 +178,7 @@ class WeatherAPIService: NSObject {
     /// 取得天氣資料 (經緯度) with Result type
     @available(iOS 14.0, *)
     @available(swift 5.0)
-    func getWeatherData(lon: Double, lat: Double, completion: @escaping (Result<CurrentWeatherData, WeatherDataFetchError>) -> Void) {
+    func requestData<D: Decodable>(lon: Double, lat: Double, completion: @escaping (Result<D, WeatherDataFetchError>) -> Void) {
         let address = "https://api.openweathermap.org/data/2.5/weather?"
         let apikey = "62ef5eba4eeb4662491645f8f68cc219"
         
@@ -201,7 +201,7 @@ class WeatherAPIService: NSObject {
             }
             
             let decoder = JSONDecoder()
-            guard let weatherData = try? decoder.decode(CurrentWeatherData.self, from: data) else {
+            guard let weatherData = try? decoder.decode(D.self, from: data) else {
                 completion(.failure(.jsonDecodeFailed))
                 return
             }
@@ -219,7 +219,7 @@ class WeatherAPIService: NSObject {
     /// 取得天氣資料 (經緯度) async
     @available(iOS 15.0, *)
     @available(swift 5.5)
-    func getWeatherData(lon: Double, lat: Double) async throws -> CurrentWeatherData {
+    func requestData<D: Decodable>(lon: Double, lat: Double) async throws -> D {
         let address = "https://api.openweathermap.org/data/2.5/weather?"
         let apikey = "62ef5eba4eeb4662491645f8f68cc219"
         
@@ -234,7 +234,7 @@ class WeatherAPIService: NSObject {
         }
         
         let decoder = JSONDecoder()
-        guard let weatherData = try? decoder.decode(CurrentWeatherData.self, from: data) else {
+        guard let weatherData = try? decoder.decode(D.self, from: data) else {
             throw WeatherDataFetchError.jsonDecodeFailed
         }
         

@@ -15,7 +15,7 @@ class ViewController: UIViewController {
     
     let cityList: [String] = ["Taipei", "New Taipei", "Taoyuan", "Taichung", "Tainan", "Kaohsiung", "New York"]
     let cityListURL: [String] = ["Taipei", "New%20Taipei", "Taoyuan", "Taichung", "Tainan", "Kaohsiung", "New%20York"]
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupPickerView()
@@ -27,7 +27,7 @@ class ViewController: UIViewController {
         cityPicker.delegate = self
         cityPicker.dataSource = self
     }
-
+    
     func isPickerViewShow(_ input: Bool) {
         // -50：顯示 PickerView
         // 200：隱藏 PickerView
@@ -41,7 +41,7 @@ class ViewController: UIViewController {
         if #available(iOS 15.0, *) {
             Task {
                 do {
-                    let weatherData = try await WeatherAPIService.shared.getWeatherData(city: city)
+                    let weatherData: WeatherDataResponse = try await NetworkManager.shared.requestData(city: city)
                     DispatchQueue.main.async {
                         self.weatherTemp.append(self.selectedCityLabel.text!)
                         self.weatherTemp.append(String(weatherData.coord.lon))
@@ -52,18 +52,18 @@ class ViewController: UIViewController {
                         print(self.weatherResult ?? "查無資料")
                         self.alert(title:"天氣查詢結果", message: self.weatherResult ?? "查無資料")
                     }
-                } catch WeatherAPIService.WeatherDataFetchError.invalidURL {
+                } catch NetworkManager.WeatherDataFetchError.invalidURL {
                     print("無效的 URL")
-                } catch WeatherAPIService.WeatherDataFetchError.requestFailed {
+                } catch NetworkManager.WeatherDataFetchError.requestFailed {
                     print("Request Error")
-                } catch WeatherAPIService.WeatherDataFetchError.responseFailed {
+                } catch NetworkManager.WeatherDataFetchError.responseFailed {
                     print("Response Error")
-                } catch WeatherAPIService.WeatherDataFetchError.jsonDecodeFailed {
+                } catch NetworkManager.WeatherDataFetchError.jsonDecodeFailed {
                     print("JSON Decode 失敗")
                 }
             }
         } else if #available(iOS 14.0, *) {
-            WeatherAPIService.shared.getWeatherData(city: city) { result in
+            NetworkManager.shared.requestData(city: city) { (result: Result<WeatherDataResponse, NetworkManager.WeatherDataFetchError>) in
                 switch result {
                 case .success(let weatherData):
                     DispatchQueue.main.async {
@@ -90,13 +90,19 @@ class ViewController: UIViewController {
                 }
             }
         } else {
-            WeatherAPIService.shared.getWeatherData(city: city) { weatherData in
+            NetworkManager.shared.requestData(city: city) { (weatherData: WeatherDataResponse?) in
+                
+                guard let coordLon = weatherData?.coord.lon else { return }
+                guard let coordLat = weatherData?.coord.lat else { return }
+                guard let temp = weatherData?.main.temp else { return }
+                guard let humidity = weatherData?.main.humidity else { return }
+                
                 DispatchQueue.main.async {
                     self.weatherTemp.append(self.selectedCityLabel.text!)
-                    self.weatherTemp.append(String(weatherData.coord.lon))
-                    self.weatherTemp.append(String(weatherData.coord.lat))
-                    self.weatherTemp.append(String(Int(weatherData.main.temp)/10)+"°C")
-                    self.weatherTemp.append(String(weatherData.main.humidity)+"%")
+                    self.weatherTemp.append(String(coordLon))
+                    self.weatherTemp.append(String(coordLat))
+                    self.weatherTemp.append(String(Int(temp)/10)+"°C")
+                    self.weatherTemp.append(String(humidity)+"%")
                     self.weatherResult = "城市名稱：\(self.weatherTemp[0])\n經度：\(self.weatherTemp[1])\n緯度：\(self.weatherTemp[2])\n目前溫度：\(self.weatherTemp[3])\n目前濕度：\(self.weatherTemp[4])"
                     print(self.weatherResult ?? "查無資料")
                     self.alert(title:"天氣查詢結果", message: self.weatherResult ?? "查無資料")
@@ -115,7 +121,7 @@ class ViewController: UIViewController {
             }
         }
     }
-
+    
     // MARK: - 天氣查詢結果以訊息框方式跳出
     
     func alert(title: String, message: String) {
@@ -124,7 +130,7 @@ class ViewController: UIViewController {
         alertController.addAction(closeAction)
         present(alertController,animated: true)
     }
-
+    
     // MARK: - @IBAction 元件
     
     @IBAction func selectCity(_ sender: UIButton) {
@@ -154,14 +160,14 @@ extension ViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         selectedCity = cityListURL[row]
         switch cityListURL[row] {
-            case "Taipei": selectedCityLabel.text = "台北"
-            case "New%20Taipei": selectedCityLabel.text = "新北"
-            case "Taoyuan": selectedCityLabel.text = "桃園"
-            case "Taichung": selectedCityLabel.text = "台中"
-            case "Tainan": selectedCityLabel.text = "台南"
-            case "Kaohsiung": selectedCityLabel.text = "高雄"
-            case "New%20York": selectedCityLabel.text = "紐約"
-            default: selectedCityLabel.text = "尚未選取到城市"
+        case "Taipei": selectedCityLabel.text = "台北"
+        case "New%20Taipei": selectedCityLabel.text = "新北"
+        case "Taoyuan": selectedCityLabel.text = "桃園"
+        case "Taichung": selectedCityLabel.text = "台中"
+        case "Tainan": selectedCityLabel.text = "台南"
+        case "Kaohsiung": selectedCityLabel.text = "高雄"
+        case "New%20York": selectedCityLabel.text = "紐約"
+        default: selectedCityLabel.text = "尚未選取到城市"
         }
     }
 }
@@ -169,18 +175,18 @@ extension ViewController: UIPickerViewDelegate, UIPickerViewDataSource {
 // MARK: - 參考來源
 
 /** Swift API 教學
-
-1. Swift — 說說 Codable （ Decodable & Encodable）
-https://medium.com/@JJeremy.XUE/swift-%E8%AA%AA%E8%AA%AA-codable-decodable-encodable-594b28ff3d49
-
-2. Swift — 來接個 API 吧（ API & JSON ）
-https://medium.com/@JJeremy.XUE/swift-%E4%BE%86%E6%8E%A5%E5%80%8B-api-%E5%90%A7-open-data-a639beeea5cb
-
-3. Swift — 來接個 API 吧（ 串接 API & 解析 JSON ）
-https://medium.com/@JJeremy.XUE/swift-%E4%BE%86%E6%8E%A5%E5%80%8B-api-%E5%90%A7-%E4%B8%B2%E6%8E%A5-api-%E8%A7%A3%E6%9E%90-json-b9ea320f674e
-
-4. "Modifications to the layout engine must not be performed from a background thread after it has been accessed from the main thread." 解法
-https://stackoom.com/question/3vjDk/%E4%BB%8E%E4%B8%BB%E7%BA%BF%E7%A8%8B%E8%AE%BF%E9%97%AE%E5%90%8E-%E4%B8%8D%E5%BE%97%E4%BB%8E%E5%90%8E%E5%8F%B0%E7%BA%BF%E7%A8%8B%E5%AF%B9-gt-%E5%B8%83%E5%B1%80%E5%BC%95%E6%93%8E%E8%BF%9B%E8%A1%8C%E4%BF%AE%E6%94%B9
-
-5. https://github.com/gmawji/ios10-artwork
-*/
+ 
+ 1. Swift — 說說 Codable （ Decodable & Encodable）
+ https://medium.com/@JJeremy.XUE/swift-%E8%AA%AA%E8%AA%AA-codable-decodable-encodable-594b28ff3d49
+ 
+ 2. Swift — 來接個 API 吧（ API & JSON ）
+ https://medium.com/@JJeremy.XUE/swift-%E4%BE%86%E6%8E%A5%E5%80%8B-api-%E5%90%A7-open-data-a639beeea5cb
+ 
+ 3. Swift — 來接個 API 吧（ 串接 API & 解析 JSON ）
+ https://medium.com/@JJeremy.XUE/swift-%E4%BE%86%E6%8E%A5%E5%80%8B-api-%E5%90%A7-%E4%B8%B2%E6%8E%A5-api-%E8%A7%A3%E6%9E%90-json-b9ea320f674e
+ 
+ 4. "Modifications to the layout engine must not be performed from a background thread after it has been accessed from the main thread." 解法
+ https://stackoom.com/question/3vjDk/%E4%BB%8E%E4%B8%BB%E7%BA%BF%E7%A8%8B%E8%AE%BF%E9%97%AE%E5%90%8E-%E4%B8%8D%E5%BE%97%E4%BB%8E%E5%90%8E%E5%8F%B0%E7%BA%BF%E7%A8%8B%E5%AF%B9-gt-%E5%B8%83%E5%B1%80%E5%BC%95%E6%93%8E%E8%BF%9B%E8%A1%8C%E4%BF%AE%E6%94%B9
+ 
+ 5. https://github.com/gmawji/ios10-artwork
+ */

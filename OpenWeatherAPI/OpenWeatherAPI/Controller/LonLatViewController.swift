@@ -42,7 +42,7 @@ class LonLatViewController: UIViewController {
         if #available(iOS 15.0, *) {
             Task {
                 do {
-                    let weatherData = try await WeatherAPIService.shared.getWeatherData(lon: lon, lat: lat)
+                    let weatherData: WeatherDataResponse = try await NetworkManager.shared.requestData(lon: lon, lat: lat)
                     DispatchQueue.main.async {
                         self.weatherTemp.append(weatherData.name)
                         self.weatherTemp.append(String(weatherData.coord.lon))
@@ -53,18 +53,18 @@ class LonLatViewController: UIViewController {
                         print(self.weatherResult ?? "查無資料")
                         self.alert(title:"天氣查詢結果", message: self.weatherResult ?? "查無資料")
                     }
-                } catch WeatherAPIService.WeatherDataFetchError.invalidURL {
+                } catch NetworkManager.WeatherDataFetchError.invalidURL {
                     print("無效的 URL")
-                } catch WeatherAPIService.WeatherDataFetchError.requestFailed {
+                } catch NetworkManager.WeatherDataFetchError.requestFailed {
                     print("Request Error")
-                } catch WeatherAPIService.WeatherDataFetchError.responseFailed {
+                } catch NetworkManager.WeatherDataFetchError.responseFailed {
                     print("Response Error")
-                } catch WeatherAPIService.WeatherDataFetchError.jsonDecodeFailed {
+                } catch NetworkManager.WeatherDataFetchError.jsonDecodeFailed {
                     print("JSON Decode 失敗")
                 }
             }
         } else if #available(iOS 14.0, *) {
-            WeatherAPIService.shared.getWeatherData(lon: lon, lat: lat) { result in
+            NetworkManager.shared.requestData(lon: lon, lat: lat) { (result: Result<WeatherDataResponse, NetworkManager.WeatherDataFetchError>) in
                 switch result {
                 case .success(let weatherData):
                     DispatchQueue.main.async {
@@ -91,13 +91,20 @@ class LonLatViewController: UIViewController {
                 }
             }
         } else {
-            WeatherAPIService.shared.getWeatherData(lon: lon, lat: lat) { weatherData in
+            NetworkManager.shared.requestData(lon: lon, lat: lat) { (weatherData: WeatherDataResponse?) in
+                
+                guard let name = weatherData?.name else { return }
+                guard let coordLon = weatherData?.coord.lon else { return }
+                guard let coordLat = weatherData?.coord.lat else { return }
+                guard let temp = weatherData?.main.temp else { return }
+                guard let humidity = weatherData?.main.humidity else { return }
+                
                 DispatchQueue.main.async {
-                    self.weatherTemp.append(weatherData.name)
-                    self.weatherTemp.append(String(weatherData.coord.lon))
-                    self.weatherTemp.append(String(weatherData.coord.lat))
-                    self.weatherTemp.append(String(Int(weatherData.main.temp)/10)+"°C")
-                    self.weatherTemp.append(String(weatherData.main.humidity)+"%")
+                    self.weatherTemp.append(name)
+                    self.weatherTemp.append(String(coordLon))
+                    self.weatherTemp.append(String(coordLat))
+                    self.weatherTemp.append(String(Int(temp)/10)+"°C")
+                    self.weatherTemp.append(String(humidity)+"%")
                     self.weatherResult = "城市名稱：\(self.weatherTemp[0])\n經度：\(self.weatherTemp[1])\n緯度：\(self.weatherTemp[2])\n目前溫度：\(self.weatherTemp[3])\n目前濕度：\(self.weatherTemp[4])"
                     print(self.weatherResult ?? "查無資料")
                     self.alert(title:"天氣查詢結果", message: self.weatherResult ?? "查無資料")
