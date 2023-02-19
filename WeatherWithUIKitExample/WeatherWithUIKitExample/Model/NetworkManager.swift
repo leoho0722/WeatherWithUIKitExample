@@ -8,6 +8,8 @@
 
 import Foundation
 
+typealias Response<D> = Result<D, NetworkManager.WeatherDataFetchError> where D: Decodable
+
 class NetworkManager: NSObject {
     
     static let shared = NetworkManager()
@@ -22,7 +24,9 @@ class NetworkManager: NSObject {
     // MARK: - 取得天氣資料 (城市名稱)
     
     /// 取得天氣資料 (城市名稱)
-    func requestData<D: Decodable>(city: String, success: @escaping (D?) -> Void, failure: @escaping (WeatherDataFetchError) -> Void) {
+    func requestData<D>(city: String,
+                        success: @escaping (D) -> Void,
+                        failure: @escaping (WeatherDataFetchError) -> Void) where D: Decodable {
         let address = "https://api.openweathermap.org/data/2.5/weather?"
         let apikey = "62ef5eba4eeb4662491645f8f68cc219"
         
@@ -34,13 +38,15 @@ class NetworkManager: NSObject {
         URLSession.shared.dataTask(with: url) { (data, response, error) in
             
             guard error == nil else {
-                print("Request Error: \(error?.localizedDescription)")
+                print("Request Error: \(String(describing: error?.localizedDescription))")
                 failure(.requestFailed)
                 return
             }
             
-            guard let response = response as? HTTPURLResponse, let data = data else {
-                print("Response Error: \(error?.localizedDescription)")
+            guard let response = response as? HTTPURLResponse,
+                  (200 ... 299).contains(response.statusCode),
+                  let data = data else {
+                print("Response Error: \(String(describing: error?.localizedDescription))")
                 failure(.responseFailed)
                 return
             }
@@ -65,7 +71,8 @@ class NetworkManager: NSObject {
     /// 取得天氣資料 (城市名稱) with Result type
     @available(iOS 14.0, *)
     @available(swift 5.0)
-    func requestData<D: Decodable>(city: String, completion: @escaping (Result<D, WeatherDataFetchError>) -> Void) {
+    func requestData<D>(city: String,
+                        completion: @escaping (Result<D, WeatherDataFetchError>) -> Void) where D: Decodable {
         let address = "https://api.openweathermap.org/data/2.5/weather?"
         let apikey = "62ef5eba4eeb4662491645f8f68cc219"
         
@@ -77,12 +84,14 @@ class NetworkManager: NSObject {
         URLSession.shared.dataTask(with: url) { (data, response, error) in
             
             guard error == nil else {
-                print("Error: \(error?.localizedDescription)")
+                print("Error: \(String(describing: error?.localizedDescription))")
                 completion(.failure(.requestFailed))
                 return
             }
             
-            guard let response = response as? HTTPURLResponse, response.statusCode == 200, let data = data else {
+            guard let response = response as? HTTPURLResponse,
+                  (200 ... 299).contains(response.statusCode),
+                  let data = data else {
                 completion(.failure(.responseFailed))
                 return
             }
@@ -107,7 +116,7 @@ class NetworkManager: NSObject {
     /// 取得天氣資料 (城市名稱) async
     @available(iOS 15.0, *)
     @available(swift 5.5)
-    func requestData<D: Decodable>(city: String) async throws -> D {
+    func requestData<D>(city: String) async throws -> D where D: Decodable {
         let address = "https://api.openweathermap.org/data/2.5/weather?"
         let apikey = "62ef5eba4eeb4662491645f8f68cc219"
         
@@ -117,7 +126,8 @@ class NetworkManager: NSObject {
         
         let (data, response) = try await URLSession.shared.data(from: url)
         
-        guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+        guard let response = response as? HTTPURLResponse,
+              (200 ... 299).contains(response.statusCode) else {
             throw WeatherDataFetchError.responseFailed
         }
         print("Status Code: \(response.statusCode)")
@@ -139,7 +149,10 @@ class NetworkManager: NSObject {
     // MARK: - 取得天氣資料 (經緯度)
     
     /// 取得天氣資料 (經緯度)
-    func requestData<D: Decodable>(lon: Double, lat: Double, success: @escaping (D?) -> Void, failure: @escaping (WeatherDataFetchError) -> Void) {
+    func requestData<D>(lon: Double,
+                       lat: Double,
+                       success: @escaping (D) -> Void,
+                       failure: @escaping (WeatherDataFetchError) -> Void) where D: Decodable {
         let address = "https://api.openweathermap.org/data/2.5/weather?"
         let apikey = "62ef5eba4eeb4662491645f8f68cc219"
         
@@ -151,13 +164,15 @@ class NetworkManager: NSObject {
         URLSession.shared.dataTask(with: url) { (data, response, error) in
             
             guard error == nil else {
-                print("Request Error: \(error?.localizedDescription)")
+                print("Request Error: \(String(describing: error?.localizedDescription))")
                 failure(.requestFailed)
                 return
             }
             
-            guard let response = response as? HTTPURLResponse, response.statusCode == 200, let data = data else {
-                print("Response Error: \(error?.localizedDescription)")
+            guard let response = response as? HTTPURLResponse,
+                  (200 ... 299).contains(response.statusCode),
+                  let data = data else {
+                print("Response Error: \(String(describing: error?.localizedDescription))")
                 failure(.responseFailed)
                 return
             }
@@ -178,7 +193,9 @@ class NetworkManager: NSObject {
     /// 取得天氣資料 (經緯度) with Result type
     @available(iOS 14.0, *)
     @available(swift 5.0)
-    func requestData<D: Decodable>(lon: Double, lat: Double, completion: @escaping (Result<D, WeatherDataFetchError>) -> Void) {
+    func requestData<D>(lon: Double,
+                        lat: Double,
+                        completion: @escaping (Result<D, WeatherDataFetchError>) -> Void) where D: Decodable {
         let address = "https://api.openweathermap.org/data/2.5/weather?"
         let apikey = "62ef5eba4eeb4662491645f8f68cc219"
         
@@ -190,12 +207,14 @@ class NetworkManager: NSObject {
         URLSession.shared.dataTask(with: url) { (data, response, error) in
             
             guard error == nil else {
-                print("Error: \(error?.localizedDescription)")
+                print("Error: \(String(describing: error?.localizedDescription))")
                 completion(.failure(.requestFailed))
                 return
             }
             
-            guard let response = response as? HTTPURLResponse, response.statusCode == 200, let data = data else {
+            guard let response = response as? HTTPURLResponse,
+                  (200 ... 299).contains(response.statusCode),
+                  let data = data else {
                 completion(.failure(.responseFailed))
                 return
             }
@@ -219,7 +238,7 @@ class NetworkManager: NSObject {
     /// 取得天氣資料 (經緯度) async
     @available(iOS 15.0, *)
     @available(swift 5.5)
-    func requestData<D: Decodable>(lon: Double, lat: Double) async throws -> D {
+    func requestData<D>(lon: Double, lat: Double) async throws -> D where D: Decodable {
         let address = "https://api.openweathermap.org/data/2.5/weather?"
         let apikey = "62ef5eba4eeb4662491645f8f68cc219"
         
@@ -229,7 +248,8 @@ class NetworkManager: NSObject {
         
         let (data, response) = try await URLSession.shared.data(from: url)
         
-        guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+        guard let response = response as? HTTPURLResponse,
+              (200 ... 299).contains(response.statusCode) else {
             throw WeatherDataFetchError.responseFailed
         }
         

@@ -8,7 +8,7 @@ class LonLatViewController: UIViewController {
     @IBOutlet weak var cityLatTextField: UITextField! // 緯度
     
     var weatherTemp: [String] = []
-    var weatherResult: String? = nil
+    var weatherResult: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,9 +18,17 @@ class LonLatViewController: UIViewController {
     // MARK: - 在鍵盤上新增 Button
     
     func addCloseBtnOnKeyBoard() {
-        let doneBtn = UIBarButtonItem(title: "關閉", style: .done, target: self, action: #selector(closeBtnAction))
-        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let doneToolBar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 320, height: 50))
+        let doneBtn = UIBarButtonItem(title: "關閉",
+                                      style: .done,
+                                      target: self,
+                                      action: #selector(closeBtnAction))
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
+                                        target: nil,
+                                        action: nil)
+        let doneToolBar = UIToolbar(frame: CGRect(x: 0,
+                                                  y: 0,
+                                                  width: 320,
+                                                  height: 50))
         doneToolBar.barStyle = .default
         var items = [UIBarButtonItem]()
         items.append(flexSpace)
@@ -30,6 +38,7 @@ class LonLatViewController: UIViewController {
         self.cityLonTextField.inputAccessoryView = doneToolBar
         self.cityLatTextField.inputAccessoryView = doneToolBar
     }
+    
     @objc func closeBtnAction() {
         self.cityLonTextField.resignFirstResponder()
         self.cityLatTextField.resignFirstResponder()
@@ -43,15 +52,21 @@ class LonLatViewController: UIViewController {
             Task {
                 do {
                     let weatherData: WeatherDataResponse = try await NetworkManager.shared.requestData(lon: lon, lat: lat)
-                    DispatchQueue.main.async {
+                    await MainActor.run {
                         self.weatherTemp.append(weatherData.name)
                         self.weatherTemp.append(String(weatherData.coord.lon))
                         self.weatherTemp.append(String(weatherData.coord.lat))
                         self.weatherTemp.append(String(Int(weatherData.main.temp)/10)+"°C")
                         self.weatherTemp.append(String(weatherData.main.humidity)+"%")
-                        self.weatherResult = "城市名稱：\(self.weatherTemp[0])\n經度：\(self.weatherTemp[1])\n緯度：\(self.weatherTemp[2])\n目前溫度：\(self.weatherTemp[3])\n目前濕度：\(self.weatherTemp[4])"
-                        print(self.weatherResult ?? "查無資料")
-                        self.alert(title:"天氣查詢結果", message: self.weatherResult ?? "查無資料")
+                        self.weatherResult = """
+                        城市名稱：\(self.weatherTemp[0])\n
+                        經度：\(self.weatherTemp[1])\n
+                        緯度：\(self.weatherTemp[2])\n
+                        目前溫度：\(self.weatherTemp[3])\n
+                        目前濕度：\(self.weatherTemp[4])
+                        """
+                        print(self.weatherResult)
+                        self.alert(title:"天氣查詢結果", message: self.weatherResult)
                     }
                 } catch NetworkManager.WeatherDataFetchError.invalidURL {
                     print("無效的 URL")
@@ -64,7 +79,7 @@ class LonLatViewController: UIViewController {
                 }
             }
         } else if #available(iOS 14.0, *) {
-            NetworkManager.shared.requestData(lon: lon, lat: lat) { (result: Result<WeatherDataResponse, NetworkManager.WeatherDataFetchError>) in
+            NetworkManager.shared.requestData(lon: lon, lat: lat) { (result: Response<WeatherDataResponse>) in
                 switch result {
                 case .success(let weatherData):
                     DispatchQueue.main.async {
@@ -73,9 +88,15 @@ class LonLatViewController: UIViewController {
                         self.weatherTemp.append(String(weatherData.coord.lat))
                         self.weatherTemp.append(String(Int(weatherData.main.temp)/10)+"°C")
                         self.weatherTemp.append(String(weatherData.main.humidity)+"%")
-                        self.weatherResult = "城市名稱：\(self.weatherTemp[0])\n經度：\(self.weatherTemp[1])\n緯度：\(self.weatherTemp[2])\n目前溫度：\(self.weatherTemp[3])\n目前濕度：\(self.weatherTemp[4])"
-                        print(self.weatherResult ?? "查無資料")
-                        self.alert(title:"天氣查詢結果", message: self.weatherResult ?? "查無資料")
+                        self.weatherResult = """
+                        城市名稱：\(self.weatherTemp[0])\n
+                        經度：\(self.weatherTemp[1])\n
+                        緯度：\(self.weatherTemp[2])\n
+                        目前溫度：\(self.weatherTemp[3])\n
+                        目前濕度：\(self.weatherTemp[4])
+                        """
+                        print(self.weatherResult)
+                        self.alert(title:"天氣查詢結果", message: self.weatherResult)
                     }
                 case.failure(let fetchError):
                     switch fetchError {
@@ -105,9 +126,15 @@ class LonLatViewController: UIViewController {
                     self.weatherTemp.append(String(coordLat))
                     self.weatherTemp.append(String(Int(temp)/10)+"°C")
                     self.weatherTemp.append(String(humidity)+"%")
-                    self.weatherResult = "城市名稱：\(self.weatherTemp[0])\n經度：\(self.weatherTemp[1])\n緯度：\(self.weatherTemp[2])\n目前溫度：\(self.weatherTemp[3])\n目前濕度：\(self.weatherTemp[4])"
-                    print(self.weatherResult ?? "查無資料")
-                    self.alert(title:"天氣查詢結果", message: self.weatherResult ?? "查無資料")
+                    self.weatherResult = """
+                    城市名稱：\(self.weatherTemp[0])\n
+                    經度：\(self.weatherTemp[1])\n
+                    緯度：\(self.weatherTemp[2])\n
+                    目前溫度：\(self.weatherTemp[3])\n
+                    目前濕度：\(self.weatherTemp[4])
+                    """
+                    print(self.weatherResult)
+                    self.alert(title:"天氣查詢結果", message: self.weatherResult)
                 }
             } failure: { weatherFetchError in
                 switch weatherFetchError {
